@@ -9,6 +9,7 @@ import {
   onSnapshot,
   addDoc,
   serverTimestamp,
+  Timestamp,
 } from 'firebase/firestore'
 import { useAuth } from '@/context/AuthContext'
 import { Textarea } from '@/components/ui/textarea'
@@ -33,7 +34,7 @@ interface Note {
   text: string
   authorName: string
   authorId: string
-  createdAt: any
+  createdAt: Timestamp | null
 }
 
 interface UserForTagging {
@@ -57,7 +58,6 @@ export default function NoteStream({
 
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const endOfMessagesRef = useRef<HTMLDivElement>(null)
-
   const noteRefs = useRef<Map<string, HTMLDivElement>>(new Map())
 
   useEffect(() => {
@@ -85,9 +85,16 @@ export default function NoteStream({
     const q = query(notesCollectionRef, orderBy('createdAt', 'asc'))
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const fetchedNotes: Note[] = snapshot.docs.map(
-        (doc) => ({ id: doc.id, ...doc.data() } as Note),
-      )
+      const fetchedNotes: Note[] = snapshot.docs.map((doc) => {
+        const data = doc.data()
+        return {
+          id: doc.id,
+          text: data.text,
+          authorId: data.authorId,
+          authorName: data.authorName,
+          createdAt: data.createdAt ?? null,
+        }
+      })
       setNotes(fetchedNotes)
     })
 

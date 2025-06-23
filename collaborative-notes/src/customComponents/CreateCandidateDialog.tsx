@@ -63,7 +63,8 @@ export function CreateCandidateDialog() {
           <DialogHeader>
             <DialogTitle>Create New Candidate</DialogTitle>
             <DialogDescription>
-              Add a new candidate to the system. Click save when you're done.
+              Add a new candidate to the system. Click save when you&rsquo;re
+              done.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">

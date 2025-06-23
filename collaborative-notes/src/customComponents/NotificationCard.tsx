@@ -93,7 +93,7 @@ export default function NotificationCard() {
                     <span className="font-bold">{notif.candidateName}</span>
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    "{notif.messagePreview}..."
+                    &ldquo;{notif.messagePreview}...&rdquo;
                   </p>
                 </div>
               </div>

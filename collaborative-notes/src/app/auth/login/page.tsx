@@ -29,15 +29,22 @@ export default function LoginPage() {
     try {
       await signInWithEmailAndPassword(auth, email, password)
       console.log('User logged in successfully!')
-
       router.push('/dashboard')
-    } catch (error: any) {
-      console.error('Error logging in:', error)
-
-      if (error.code === 'auth/invalid-credential') {
-        setError('Invalid email or password. Please try again.')
+    } catch (error: unknown) {
+      if (
+        typeof error === 'object' &&
+        error !== null &&
+        'code' in error &&
+        typeof (error as { code: string }).code === 'string'
+      ) {
+        const code = (error as { code: string }).code
+        if (code === 'auth/invalid-credential') {
+          setError('Invalid email or password. Please try again.')
+        } else {
+          setError('Failed to log in. Please try again later.')
+        }
       } else {
-        setError('Failed to log in. Please try again later.')
+        setError('An unexpected error occurred.')
       }
     }
   }
@@ -87,7 +94,7 @@ export default function LoginPage() {
             </Button>
           </form>
           <div className="mt-4 text-center text-sm">
-            Don't have an account?{' '}
+            Don&rsquo;t have an account?{' '}
             <Link href="/auth/signup" className="underline">
               Sign up
             </Link>

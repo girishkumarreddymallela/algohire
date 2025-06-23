@@ -52,12 +52,22 @@ export default function SignUpPage() {
       console.log('User document created in Firestore')
 
       router.push('/auth/login')
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error signing up:', error)
-      if (error.code === 'auth/email-already-in-use') {
-        setError('This email address is already in use.')
+      if (
+        typeof error === 'object' &&
+        error !== null &&
+        'code' in error &&
+        typeof (error as { code: string }).code === 'string'
+      ) {
+        const code = (error as { code: string }).code
+        if (code === 'auth/email-already-in-use') {
+          setError('This email address is already in use.')
+        } else {
+          setError('Failed to create an account. Please try again.')
+        }
       } else {
-        setError('Failed to create an account. Please try again.')
+        setError('An unexpected error occurred.')
       }
     }
   }
@@ -78,7 +88,7 @@ export default function SignUpPage() {
               <Input
                 id="name"
                 type="text"
-                placeholder="John Doe"
+                placeholder="yourname"
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
